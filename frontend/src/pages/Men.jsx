@@ -1,4 +1,5 @@
 import React from "react";
+
 import ProductCard from "../components/ProductCard";
 import {
   menBottomProducts,
@@ -9,8 +10,9 @@ import {
 const Men = () => {
   return (
     <div>
+    <h1 className="Title">Men </h1>
       <br />
-      <h3>Men Bottoms</h3>
+      <h3 className="mini-title">Bottoms</h3>
       <br />
       <div className="products">
         { menBottomProducts.map((product) => (
@@ -18,7 +20,7 @@ const Men = () => {
         ))}
       </div>
 
-      <h3>Men Ethnic Wear</h3>
+      <h3 className="mini-title">Ethnic Wear</h3>
       <br />
       <div className="products">
         {menEthnicProducts.map((product) => (
@@ -26,7 +28,7 @@ const Men = () => {
         ))}
       </div>
 
-      <h3>Men Topwear</h3>
+      <h3 className="mini-title">Topwear</h3>
       <br />
       <div className="products">
         {menTopProducts.map((product) => (

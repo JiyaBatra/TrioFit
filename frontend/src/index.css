@@ -26,6 +26,7 @@ body {
    THEME VARIABLES
 ================================ */
 :root {
+  
   --pink: #cfe8ff;
   --peach-pink: #d9efff;
   --peach: #f2f8ff;
@@ -33,7 +34,7 @@ body {
   --mint: #d6ecff;
   --sky: #9fd3ff;
   --lavender: #6faee8;
-
+--text-main: #2d3436;
   --bg: #ffffff;
   --card-bg: #ffffff;
   --panel-bg: #f8fbff;
@@ -44,12 +45,25 @@ body {
   --text: #0f172a;
   --text-light: #5572a7;
   --text-muted: #667892;
-
-  --danger: #f76c6c;
+--title-gradient: linear-gradient(90deg, transparent, #87CEEB, transparent);  --danger: #f76c6c;
   --danger-hover: #e04e4e;
-
+--link-color: #555555;      /* Subtle grey for light mode */
+  --link-hover: #000000;      /* Pure black for light mode hover */
   --card-shadow: rgba(0, 0, 0, 0.08);
   --header-shadow: rgba(0, 0, 0, 0.06);
+  --text-main: #2d3436;
+  --title-line-color: #000000; /* Solid Black for Light Theme */
+  --accent-color: #232224;
+  --header-bg: rgba(87, 166, 244, 0.65); /* Pale blue tint with transparency */
+  --header-border: rgba(255, 255, 255, 0.6);
+  --header-shadow: rgba(0, 120, 255, 0.08); /* Tiny hint of blue in the shadow */
+  --text-color: #1a2b3c;      
+ --header-hover-bg: rgba(245, 250, 255, 0.85);  /*            /* Deep navy text for contrast */
+ --bg-main: #ffffff;
+  --text-main1: #1a1a1a;
+  --accent-soft: #f8f9fa; /* Very light neutral gray */
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --shadow-elegant: rgba(0, 0, 0, 0.05);
 }
 
 /* 🌙 Dark Theme */
@@ -60,42 +74,85 @@ body {
   --green: #1f3a52;
   --mint: #1c3a4d;
   --sky: #3b82f6;
-  --lavender: #0f172a;
-
+  --lavender: #cbf2fc;
+--text-main: #f8f9fa;
   --bg: #0b1120;
+  --link-color: #555555;      /* Subtle grey for light mode */
+  --link-hover: #000000;      /* Pure black for light mode hover */
   --text: #f8fafc; /* higher brightness for better contrast */
-
+--title-gradient: linear-gradient(90deg, transparent, #d1c4e9, transparent);
   --card-shadow: rgba(255, 255, 255, 0.08);
   --header-shadow: rgba(255, 255, 255, 0.05);
+ --header-bg: rgba(15, 20, 30, 0.75);    /* Dark slate/navy tint */
+  --header-border: rgba(255, 255, 255, 0.05);
+  --header-shadow: rgba(0, 0, 0, 0.5);
+  --text-color: #e0e6ed;
+  --header-hover-bg: rgba(25, 30, 45, 0.85);
+  --bg-main: #121212;
+  --text-main: #f5f5f5;
+  --accent-soft: #1e1e1e;
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  
 }
 
 
-
-
-/* ===============================
-   HEADER
-================================ */
 .header {
-  position: fixed;       /* keeps it fixed at the top */
-  top: 0;                /* aligns it to the very top */
-  left: 0;               /* ensures it spans from the left edge */
-  width: 100%;           /* full width across the viewport */
-  background: var(--lavender);
-  padding: 1rem 2rem;
+  position: fixed;
+  top: 15px;
+  width: 96%;
+  left: 2%;
+  z-index: 1000;
+  box-sizing: border-box;
+
+  /* Glassmorphism Core */
+  background: var(--header-bg);
+  backdrop-filter: blur(15px) saturate(180%); /* Saturate makes colors behind it pop */
+  -webkit-backdrop-filter: blur(15px) saturate(180%);
+  
+  /* Border & Shape */
+  border: 1px solid var(--header-border);
+  border-radius: 100px;
+  
+  /* Layout */
+  min-height: 65px;
+  padding: 0 2.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-radius: 0 0 20px 20px;
-  box-shadow: 0 5px 15px var(--header-shadow);
-  flex-wrap: wrap;
-  gap: 1rem;
-  z-index: 1000;         /* ensures it stays above other elements */
+  gap: 1.5rem;
+
+  /* Premium Soft Shadow */
+  box-shadow: 0 12px 40px var(--header-shadow);
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
+.header:hover {
+  background: var(--header-hover-bg);
+  transform: translateY(-3px); /* Gentle lift */
+  box-shadow: 0 20px 50px var(--header-hover-shadow);
+  border: 1px solid rgba(255, 255, 255, 0.8); /* Border becomes more "shimmery" */
+}
+
+
 .logo {
-  font-size: 1.8rem;
-  font-weight: bold;
+  /* Positioning: Moves it up and left */
+  margin-top: -5px;     /* Negative value pulls it UP */
+  margin-left: -10px;   /* Negative value pulls it LEFT */
+  margin-right: auto;   /* Keeps it anchored to the left side */
+
+  /* The "Pretty" Styling */
+  font-family: 'Playfair Display', 'Georgia', serif; 
+  font-size: 1.9rem;    /* Balanced size */
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  
+  /* Color & Cleanup */
   color: var(--text);
+  text-decoration: none;
+  cursor: pointer;
+  
+  /* Ensures it doesn't get cut off if the header is very slim */
+  display: inline-block; 
 }
 
 .header nav {
@@ -179,37 +236,60 @@ main {
    OFFER BANNER
 ================================ */
 .offer-slider {
-  width: 100%;
-  height: 90vh;
+  width: 95%;            /* Slightly narrowed for a modern look */
+  max-width: 1400px;     /* Prevents it from getting too wide on huge monitors */
+  height: 70vh;          /* 90vh is often too tall for e-commerce (pushes products too far down) */
+  margin: 2rem auto;     /* Adds margin at the top and centers the slider */
   position: relative;
   overflow: hidden;
-  border-radius: 20px; /* slightly curved */
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Adds depth */
 }
 
 .slider-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: 0.5s ease-in-out;
+  display: block;        /* Removes potential bottom whitespace */
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: rgba(0,0,0,0.4);
-  color: var(--bg);
-  font-size: 2.5rem;
+  background-color: rgba(255, 255, 255, 0.8); /* Light background is often better for shops */
+  color: #333;           /* Darker icon for contrast */
+  font-size: 1.5rem;
   border: none;
-  padding: 0.6rem 1rem;
+  width: 50px;           /* Consistent circular shape */
+  height: 50px;
   cursor: pointer;
   border-radius: 50%;
   z-index: 10;
-  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+/* Positioning the arrows with a small offset from the edge */
+.arrow-left {
+  left: 20px;
+}
+
+.arrow-right {
+  right: 20px;
 }
 
 .arrow:hover {
-  background-color: rgba(0,0,0,0.7);
+  background-color: #ffffff;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.arrow:hover {
+  background-color: rgba(192, 229, 252, 0.7);
 }
 
 .arrow.left { left: 20px; }
@@ -240,21 +320,34 @@ main {
 /* ===============================
    POPULAR SLIDER
 ================================ */
-.popular-slider-section {
-  border: 3px solid var(--primary);
-  border-radius: 12px;
-  padding: 1rem;
-  margin: 2rem auto;
-  max-width: 100%;
-  box-shadow: 0 4px 15px var(--card-shadow);
-  background-color: var(--peach);
+popular-slider-section {
+  /* Glassmorphism Base */
+  background: var(--header-bg); /* Using the same variable from your header */
+  backdrop-filter: blur(15px) saturate(160%);
+  -webkit-backdrop-filter: blur(15px) saturate(160%);
+  
+  /* Border & Shape */
+  border: 1px solid var(--header-border);
+  border-radius: 24.px; /* Softer, more modern corners */
+  padding: 2rem 1rem;
+  margin: 3rem auto;
+  max-width: 96%;      /* Matches the header width for symmetry */
+  
+  /* Shadow & Depth */
+  box-shadow: 0 15px 35px var(--header-shadow);
+  transition: transform 0.4s ease;
 }
 
+/* Section Title - Using your new Pretty Font Stack */
 .popular-slider-section h2 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  color: var(--primary);
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-size: 2.4rem;
+  font-weight: 600;
+  font-style: italic;
+  margin-bottom: 2rem;
+  margin-left: 2rem;
+  color: var(--text-main);
+  letter-spacing: 1px;
 }
 
 .slider-container {
@@ -268,39 +361,65 @@ main {
   display: flex;
   overflow-x: auto;
   scroll-behavior: smooth;
-  gap: 1rem;
-  padding: 1rem 3rem; /* space for arrows */
+  gap: 20px;
+  padding: 1.5rem 1rem;
+  scrollbar-width: none; /* Hides scrollbar for Firefox */
 }
 
+.slider::-webkit-scrollbar {
+  display: none; /* Hides scrollbar for Chrome/Safari */
+}
+
+/* Individual Product Cards */
 .slider-item {
-  min-width: 200px;
-  background: #fff;
-  border-radius: 10px;
-  padding: 0.5rem;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  min-width: 220px;
+  /* Slightly more solid glass for the cards so products pop */
+  background: rgba(255, 255, 255, 0.4); 
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 18px;
+  padding: 1rem;
   text-align: center;
-  transition: transform 0.3s;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .slider-item img {
   width: 100%;
-  border-radius: 10px;
-  margin-bottom: 0.5rem;
+  height: 250px;       /* Fixed height for uniformity */
+  object-fit: cover;   /* Ensures product images look clean */
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
 }
 
 .slider-item h4 {
-  margin: 0.3rem 0;
-  font-size: 1rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: var(--text-color);
+  margin: 0.5rem 0;
 }
 
 .slider-item p {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--lavender); /* Price matches your theme color */
   margin: 0;
-  font-weight: 600;
-  color: #1E90FF;
 }
 
+/* Card Hover Effect */
 .slider-item:hover {
-  transform: scale(1.05);
+  transform: translateY(-10px); /* Lifts the product up */
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 15px 30px var(--header-shadow);
+  border: 1px solid var(--lavender);
+}
+
+/* Dark Theme Adjustments */
+[data-theme="dark"] .slider-item {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* ===============================
@@ -454,7 +573,7 @@ main {
   border: 1px solid #94a3b8;
   border-radius: 10px;
   background: var(--bg);
-  color: var(--peach-pink);
+  color: var(--text-main);
   outline: none;
   transition: box-shadow 0.2s ease, border 0.2s ease;
 }
@@ -865,12 +984,13 @@ main {
 .product-card-content {
   display: grid;
   gap: 0.35rem;
+  color: black;
 }
 
 .product-card-content label,
 .product-card-content span {
   font-size: 0.95rem;
-  color: var(--text);
+  color: black;
 }
 
 .product-card-content label select,
@@ -883,7 +1003,7 @@ main {
   border: 1px solid rgba(148, 163, 184, 0.8);
   border-radius: 10px;
   background: var(--bg);
-  color: var(--text);
+  color: black;
 }
 
 .product-card-content p {
@@ -1268,10 +1388,8 @@ main {
 .category-container {
 width: 100%;
 height: 100%;
-border: 2px solid #1E90FF;
 border-radius: 12px;
 padding: 1rem;
-background-color: var(--peach);
   display: flex;
   justify-content: center;
   gap: 2rem;
@@ -1313,6 +1431,7 @@ background-color: var(--peach);
 /*=============================================
 frequently asked ques
 ===============================================*/
+
 /* ===============================
 FAQ PAGE
 ================================ */
@@ -1371,20 +1490,63 @@ h1 {
   font-weight: 700;
   color: var(--text);
 }
+.Title {
+  text-align: center;
+  margin: 60px auto;
+  display: block;
+  width: fit-content;
+  position: relative;
+  padding-bottom: 15px;
 
-/* Back link */
+  /* Pretty Font Stack */
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-size: 2.8rem;
+  font-weight: 600;
+  font-style: italic;
+  letter-spacing: 1.5px;
+  
+  /* Theme-Aware Color */
+  color: var(--text-main);
+  
+  transition: color 0.3s ease;
+}
+
+/* The Decorative Underline using the Root Variable */
+.Title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 15%;
+  right: 15%;
+  height: 2px;
+  background: var(--title-gradient);
+  border-radius: 2px;
+}
+
+
+
+
+
+/* 2. The Updated Back Link CSS */
 .back-link {
   display: inline-block;
   margin-bottom: 20px;
   text-decoration: none;
-  color: #444;
+  
+  /* Use the variables here */
+  color: var(--link-color);
   font-size: 0.95rem;
-  transition: color 0.3s ease;
+  font-weight: 500; /* Added a tiny bit of weight for readability */
+  
+  transition: all 0.3s ease;
 }
 
 .back-link:hover {
-  color: #000;
+  color: var(--link-hover);
+  /* Optional: move it slightly to the left on hover for a "back" effect */
+  transform: translateX(-3px); 
 }
+
 
 /* Divider */
 .bold-divider {
@@ -1436,7 +1598,9 @@ h1 {
   color: #000;
 }
 
-/* Footer */
+/* ==================================
+footer
+====================================*/
 .footer-text {
   text-align: center;
   font-size: 0.85rem;
@@ -1487,8 +1651,60 @@ h1 {
         }
 
         h1 { color: var(--lavender); margin-bottom: 10px; }
-        h3 { color: var(--lavender); margin-top: 30px; }
-        
+        h3 { color: var(--lavender);
+           margin-top: 30px; 
+          }
+       
+.mini-title {
+  /* Your Pretty Font Stack */
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-size: 2.8rem;      /* Elegant & Bold */
+  font-weight: 600;
+  font-style: italic;     /* High-fashion look */
+  letter-spacing: 1.5px;
+  
+  /* Color & Theme Integration */
+  color: var(--text-main); /* Your blueish-lavender variable */
+  margin: 60px 0 30px 4%;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  
+  /* Performance & Smoothness */
+  transition: all 0.4s ease;
+  text-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* The Decorative Fading Line */
+.mini-title::after {
+  .Title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 15%;
+  right: 15%;
+  height: 2px;
+  background: var(--title-gradient);
+  border-radius: 2px;
+}
+
+}
+
+/* Dark Theme Adjustments */
+[data-theme="dark"] .mini-title {
+  color: #ffffff; /* Slightly brighter for dark background */
+  text-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Interactive Hover */
+.mini-title:hover {
+  transform: translateX(10px); /* Subtle slide effect */
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+          
+        }
         .bold-divider {
             height: 3px; 
             background-color: var(--lavender);

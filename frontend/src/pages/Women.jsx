@@ -5,10 +5,10 @@ import { topProducts, bottomProducts, ethnicProducts} from "../data/products";
 const Women = () => {
   return (
     <div>
-      <h1>Women✨</h1>
+      <h1 className='Title'>Women</h1>
       <br />
 
-      <h3>TopWear</h3>
+      <h3 className='mini-title'>TopWear</h3>
       <br />
       <div className="products">
         {topProducts.map((p) => (
@@ -17,7 +17,7 @@ const Women = () => {
       </div>
 
       <br />
-      <h3>BottomWear</h3>
+      <h3 className='mini-title'>BottomWear</h3>
       <br />
       <div className="products">
         {bottomProducts.map((p) => (
@@ -26,7 +26,7 @@ const Women = () => {
       </div>
 
       <br />
-      <h3>Ethnicwear</h3>
+      <h3 className='mini-title'>Ethnicwear</h3>
       <br />
       <div className="products">
         {ethnicProducts.map((p) => (

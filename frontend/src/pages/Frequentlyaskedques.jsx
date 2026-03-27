@@ -46,7 +46,7 @@ const Frequentlyaskedques = () => {
   }
 
   return (
-    <div className="container">
+    <div className="c">
     
       <h1>Frequently Asked Questions</h1>
 
