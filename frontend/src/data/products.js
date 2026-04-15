@@ -1,5 +1,19 @@
 // central product data using import.meta URLs for assets
-export const topProducts = [
+const discountedProductIds = new Set([1, 5, 12, 15, 22, 26]);
+
+const applyDiscount = (products) =>
+  products.map((product) =>
+    discountedProductIds.has(product.id)
+      ? {
+          ...product,
+          isDiscounted: true,
+          discountedPrice: Number((product.price * 0.8).toFixed(2)),
+          discount: "20% OFF",
+        }
+      : product
+  );
+
+const topProductsData = [
     {
         id: 1,
         name: "Solid Women Dark Blue Top",
@@ -112,7 +126,9 @@ export const topProducts = [
     },
 ];
 
-export const bottomProducts = [
+export const topProducts = applyDiscount(topProductsData);
+
+const bottomProductsData = [
     {
         id: 11,
         name: "Straight Fit High-Rise Stretchable Jeans",
@@ -215,7 +231,9 @@ export const bottomProducts = [
     },
 ];
 
-export const ethnicProducts = [
+export const bottomProducts = applyDiscount(bottomProductsData);
+
+const ethnicProductsData = [
     {
         id: 21,
         name: "blue floral print corset back kurti",
@@ -327,6 +345,8 @@ export const ethnicProducts = [
         ],
     },
 ];
+
+export const ethnicProducts = applyDiscount(ethnicProductsData);
 
 export const kidEthnicProducts = [
     {
@@ -1402,3 +1422,4 @@ export const menTopProducts = [
     ],
   },
 ];
+

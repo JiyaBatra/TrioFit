@@ -116,12 +116,15 @@ const SeeMore = () => {
   if (loading) return <p>Loading...</p>;
   if (!product) return <p>Product not found 😢</p>;
 
+  const hasDiscount = Boolean(product.isDiscounted || product.discountedPrice);
+  const finalPrice = hasDiscount ? product.discountedPrice : product.price;
+
   const handleAddToCart = () => {
     dispatch(
       addToCart({
         id: product.id || product._id,
         name: product.name,
-        price: product.price,
+        price: finalPrice,
         selectedVariant: main,
         image: product.image,
         size: selectedSize,
@@ -138,7 +141,7 @@ const SeeMore = () => {
           id: product.id || product._id,
           name: product.name,
           image: main || product.image,
-          price: product.price,
+          price: finalPrice,
           size: selectedSize,
           quantity,
         },
@@ -168,7 +171,21 @@ const SeeMore = () => {
   return (
     <main className="see-more-page">
       <h1>{product.name}</h1>
-      <p className="price">₹{product.price}</p>
+      {hasDiscount ? (
+        <div className="see-more-price">
+          <p className="original-price" style={{ textDecoration: "line-through", color: "#999", marginBottom: "5px" }}>
+            ₹{product.price}
+          </p>
+          <p className="discounted-price" style={{ fontSize: "28px", fontWeight: "bold", color: "#27ae60", marginBottom: "5px" }}>
+            ₹{product.discountedPrice}
+          </p>
+          <p className="discount-label" style={{ color: "#e74c3c", fontWeight: "bold", fontSize: "16px" }}>
+            {product.discount || "20% OFF"}
+          </p>
+        </div>
+      ) : (
+        <p className="price">₹{product.price}</p>
+      )}
 
       <div className="see-more-container">
         <div className="main-image">

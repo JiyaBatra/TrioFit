@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from "axios";
 import ProductCard from "../components/ProductCard";
-import { topProducts, bottomProducts, ethnicProducts} from "../data/products";
+import { topProducts, bottomProducts, ethnicProducts } from "../data/products";
 
 const Women = () => {
   const [extraProducts, setExtraProducts] = useState({
