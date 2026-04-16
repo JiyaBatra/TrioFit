@@ -2,7 +2,7 @@ import React from 'react';
 
 const TermsAndCondition = () => {
   return (
-    <div className="container">
+    <div className="c">
     
       <h1>Terms & Conditions</h1>
       <hr className="bold-divider" />

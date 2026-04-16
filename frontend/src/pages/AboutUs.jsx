@@ -6,8 +6,8 @@ const AboutUs = () => {
     <>
      
 
-      <div className="container">
-        <h2>Who We Are</h2>
+      <div className="c">
+        <h1>Who We Are</h1>
         <hr className="bold-divider" />
 
         <p>
@@ -34,7 +34,7 @@ const AboutUs = () => {
           </div>
         </div>
 
-        <h2>Our Mission</h2>
+        <h1>Our Mission</h1>
         <hr className="bold-divider" />
 
         <p>

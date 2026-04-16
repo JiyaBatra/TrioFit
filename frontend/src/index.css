@@ -2593,7 +2593,7 @@ li {
             padding: 25px;
             border-radius: 12px;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             border-bottom: 4px solid var(--lavender);
         }
 
@@ -3059,7 +3059,7 @@ li {
 
 .contact-card h3 {
   margin-bottom: 10px;
-  color: var(--text);
+  color: var(--text-main1);
 }
 
 .contact-card p {
@@ -3099,7 +3099,7 @@ li {
   border-radius: 8px;
   border: 1px solid var(--panel-border);
   background: var(--panel-bg);
-  color: var(--text);
+  color: var(--text-main1);
   font-size: 0.95rem;
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -3109,7 +3109,7 @@ li {
 .form-group select:focus,
 .form-group textarea:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 2px rgba(18, 18, 18, 0.2);
 }
 
 /* SUBMIT BUTTON */

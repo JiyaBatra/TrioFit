@@ -2,7 +2,7 @@ import React from 'react';
 
 const ReturnPolicy = () => {
   return (
-    <div className="container">
+    <div className="c">
     
       <h1>Return Policy (Legal)</h1>
       <hr className="bold-divider" />

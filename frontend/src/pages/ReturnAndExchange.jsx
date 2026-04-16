@@ -2,9 +2,11 @@ import React from 'react'
 
 const ReturnAndExchange = () => {
   return (
-    <div className="content-box">
+    <>
+    
+    <div className="c">
      
-      <h1>Return & Exchange Policy</h1>
+      <h1>Return & Exchange Policy </h1>
 
       <hr className="bold-divider" />
 
@@ -57,6 +59,7 @@ const ReturnAndExchange = () => {
       <hr className="bold-divider" />
       <p className="footer-text">© 2026 TrioFit — Classic style, modern tech</p>
     </div>
+    </>
   )
 }
 

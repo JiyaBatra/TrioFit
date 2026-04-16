@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 
 const OurStore = () => {
   return (
-    <div className="container">
+    <div className="c">
      
 
-      <h1 style={{ color: "var(--text)" }}>Where We Operate</h1>
+      <h1 style={{ color: "var(--white)" }}>Where We Operate</h1>
       <div className="bold-divider"></div>
 
       <p>
