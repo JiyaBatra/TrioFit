@@ -5,8 +5,8 @@ const CareerOpportunities = () => {
   return (
     <>
      
-      <div className="container">
-        <h2>Open Positions</h2>
+      <div className="c">
+        <h1>Open Positions</h1>
         <hr className="bold-divider" />
 
         <div className="job-grid">

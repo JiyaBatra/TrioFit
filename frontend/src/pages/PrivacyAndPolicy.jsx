@@ -2,7 +2,7 @@ import React from 'react';
 
 const PrivacyAndPolicy = () => {
   return (
-    <div className="container">
+    <div className="c">
     
       <h1>Privacy Policy</h1>
       <hr className="bold-divider" />

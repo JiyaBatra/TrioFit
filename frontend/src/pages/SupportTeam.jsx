@@ -2,7 +2,7 @@ import React from "react";
 
 const SupportTeam = () => {
   return (
-    <div className="support-wrapper">
+    <div className="c">
     
 
       <h1 className="c">Support Team</h1>
