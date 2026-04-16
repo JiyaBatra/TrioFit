@@ -169,16 +169,67 @@ const SeeMorePage = () => {
     setShowReviewSuccess(true);
     setTimeout(() => setShowReviewSuccess(false), 3000);
   };
+  const price = Number(product.price) || 0;
+const discount = Number(product.discount) || 0;
 
-  return (
-    <main className="see-more-page">
-      <div className="see-more-heading">
-        <div>
-          <p className="see-more-kicker">See more</p>
-          <h1>{product.name}</h1>
-        </div>
-        <p className="price">Rs. {product.price}</p>
+const hasDiscount = discount > 0;
+
+const discountedPrice = price - (price * discount) / 100;
+
+ return (
+  <main className="see-more-page">
+    <div className="see-more-heading">
+      <div>
+        <p className="see-more-kicker">See more</p>
+        <h1>{product.name}</h1>
+
+        {product.discount ? (
+          <div className="see-more-price">
+            <p
+              className="original-price"
+              style={{
+                textDecoration: "line-through",
+                color: "#999",
+                marginBottom: "5px",
+              }}
+            >
+              ₹{product.price}
+            </p>
+
+            <p
+              className="discounted-price"
+              style={{
+                fontSize: "28px",
+                fontWeight: "bold",
+                color: "#27ae60",
+                marginBottom: "5px",
+              }}
+            >
+              ₹
+              {(
+                product.price -
+                (product.price * product.discount) / 100
+              ).toFixed(0)}
+            </p>
+
+            <p
+              className="discount-label"
+              style={{
+                color: "#e74c3c",
+                fontWeight: "bold",
+                fontSize: "16px",
+              }}
+            >
+              {product.discount}% OFF
+            </p>
+          </div>
+        ) : (
+          <p className="price">₹{product.price}</p>
+        )}
       </div>
+    </div>
+
+    {/* 👇 IMPORTANT: yaha se tumhara next code start hona chahiye */}
 
       <div className="see-more-layout">
         <section className="see-more-gallery">
