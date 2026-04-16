@@ -5,7 +5,7 @@ const SupportTeam = () => {
     <div className="support-wrapper">
     
 
-      <h1>Support Team</h1>
+      <h1 className="c">Support Team</h1>
       <hr className="bold-divider" />
 
       <div className="contact-grid">

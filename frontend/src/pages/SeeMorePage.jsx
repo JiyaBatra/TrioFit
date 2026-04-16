@@ -45,7 +45,7 @@ const SeeMorePage = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const productId = Number(id);
+ const productId = id;
   const [showTryOn, setShowTryOn] = useState(false);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -63,24 +63,26 @@ const SeeMorePage = () => {
   });
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      let foundProduct = findStaticProduct(productId);
+  const fetchProduct = async () => {
+    let foundProduct = findStaticProduct(productId);
 
-      if (!foundProduct && Number.isNaN(productId)) {
-        try {
-          const { data } = await axios.get(`http://localhost:5000/api/products/${id}`);
-          foundProduct = data.product;
-        } catch (error) {
-          console.error("Error fetching product:", error);
-        }
+    if (!foundProduct) {
+      try {
+        const { data } = await axios.get(
+          `http://localhost:5000/api/products/${id}`
+        );
+        foundProduct = data.product;
+      } catch (error) {
+        console.error("Error fetching product:", error);
       }
+    }
 
-      setProduct(foundProduct || null);
-      setLoading(false);
-    };
+    setProduct(foundProduct || null);
+    setLoading(false);
+  };
 
-    fetchProduct();
-  }, [id, productId]);
+  fetchProduct();
+}, [id]);
 
   useEffect(() => {
     if (!product) {
@@ -123,7 +125,7 @@ const SeeMorePage = () => {
       addToCart({
         id: product.id || product._id,
         name: product.name,
-        price: hasDiscount ? parseFloat(discountedPrice) : price,
+        price: product.price,
         selectedVariant: main,
         image: product.image,
         size: selectedSize,

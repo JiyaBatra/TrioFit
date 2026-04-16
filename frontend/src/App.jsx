@@ -22,6 +22,7 @@ import SeeMorePage from "./pages/SeeMorePage";
 import Women from "./pages/Women";
 import Men from "./pages/Men";
 import Kids from "./pages/Kids";
+import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
 import Login from "./pages/Login";
@@ -58,6 +59,7 @@ function App() {
         <Route path="/Kids" element={<Kids />} />
       <Route path="/see-more/:id" element={<SeeMorePage />} />
       <Route path="/checkout" element={<Checkout />} />
+      <Route path="/cart" element={<Cart />} />
       <Route path="/OrderSuccess" element={<OrderSuccess />} />
       
       </Routes>

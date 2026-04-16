@@ -8,34 +8,51 @@ const Cart = () => {
   if (!cartItems.length) {
     return (
       <div className="cart-page">
-        <h2>Your Cart</h2>
-        <p>No items in cart 🛒</p>
+        <h2 className="cart-title">Your Cart 🛒</h2>
+        <p>No items in cart</p>
       </div>
     );
   }
 
   return (
     <div className="cart-page">
-      <h2>Your Cart</h2>
-      <ul>
+      <h2 className="cart-title">Your Cart 🛒</h2>
+
+      <div className="cart-container">
         {cartItems.map((item, idx) => (
-          <li
-            key={idx}
-            style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}
-          >
+          <div className="cart-card" key={idx}>
+            
+            {/* IMAGE */}
             <img
               src={item.selectedVariant || item.image}
               alt={item.name}
-              style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 6, cursor: "pointer" }}
-              onClick={() => navigate(`/product/${item.id}`)}
+              className="cart-img"
+             onClick={() => navigate(`/see-more/${String(item.id)}`)}
             />
-            <span>
-              {item.name} — ₹{item.price} {item.quantity > 1 && `x${item.quantity}`}
-              {item.selectedVariant && <span>(Selected variant)</span>}
-            </span>
-          </li>
+
+            {/* DETAILS */}
+            <div className="cart-details">
+              <h3>{item.name}</h3>
+
+              <p className="price">
+                ₹{item.price} {item.quantity > 1 && `x${item.quantity}`}
+              </p>
+
+              {item.selectedVariant && (
+                <p className="variant">Variant selected</p>
+              )}
+
+              <button
+                className="view-btn"
+               onClick={() => navigate(`/see-more/${String(item.id)}`)}
+              >
+                View Product 👀
+              </button>
+            </div>
+
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
