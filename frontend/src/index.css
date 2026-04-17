@@ -2746,6 +2746,7 @@ li {
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
             transition: transform 0.3s ease;
+            border: 2px solid var(--border-subtle);
         }
 
         .presence-card:hover {
