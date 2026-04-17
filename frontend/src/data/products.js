@@ -9,6 +9,48 @@ const applyDiscount = (products, discountPercent) =>
     discount: `${discountPercent}% OFF`,
   }));
 
+const menDiscountedProductIds = new Set([99, 100, 109, 110, 119, 120]);
+
+const applyMenDiscount = (products) =>
+  products.map((product) =>
+    menDiscountedProductIds.has(product.id)
+      ? {
+          ...product,
+          isDiscounted: true,
+          discountedPrice: Number((product.price * 0.4).toFixed(2)),
+          discount: "60% OFF",
+        }
+      : product
+  );
+
+const kidBoysDiscountedProductIds = new Set([31, 32, 41, 42, 46, 47, 56, 57]);
+
+const applyKidBoysDiscount = (products) =>
+  products.map((product) =>
+    kidBoysDiscountedProductIds.has(product.id)
+      ? {
+          ...product,
+          isDiscounted: true,
+          discountedPrice: Number((product.price * 0.7).toFixed(2)),
+          discount: "30% OFF",
+        }
+      : product
+  );
+
+const kidGirlsDiscountedProductIds = new Set([66, 67, 77, 78, 84, 85, 92, 93]);
+
+const applyKidGirlsDiscount = (products) =>
+  products.map((product) =>
+    kidGirlsDiscountedProductIds.has(product.id)
+      ? {
+          ...product,
+          isDiscounted: true,
+          discountedPrice: Number((product.price * 0.5).toFixed(2)),
+          discount: "50% OFF",
+        }
+      : product
+  );
+
 const topProductsData = [
     {
         id: 1,
@@ -348,6 +390,7 @@ const kidEthnicProductsData = [
     {
         id: 31,
         name: "Cutiekins boys'printed kurta ",
+
         price: 799,
         image: new URL("../assets/images/kid/kid/boys'clothing/ethnic wear/1/1.1.jpeg", import.meta.url).href,
         variants: [
@@ -627,6 +670,7 @@ const kidShirtsProductsData = [
     ],
 },
 ];
+export const kidShirtsProducts = applyKidBoysDiscount(kidShirtsProductsData);
 
 export const kidShirtsProducts = applyDiscount(kidShirtsProductsData, 30);
 const kidTShirtsProductsData = [

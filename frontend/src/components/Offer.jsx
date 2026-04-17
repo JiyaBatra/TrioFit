@@ -9,6 +9,12 @@ import offer4 from "../assets/images/offer/offer4.png";
 const Offer = () => {
   const navigate = useNavigate();
   const images = [offer1, offer2, offer3, offer4];
+  const linkTargets = [
+    "#fiftypercentoff",
+    "#sixtypercentoff",
+    "#twentypercentoff",
+    "#thirtypercentoff",
+  ];
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
