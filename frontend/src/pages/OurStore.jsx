@@ -52,7 +52,7 @@ const OurStore = () => {
         style={{ marginTop: "60px", opacity: 0.3 }}
       />
 
-      <p style={{ opacity: 0.6 }}>
+      <p style={{ opacity: 0.6, textAlign: "center" }}>
         © 2026 TrioFit — Classic style, modern tech
       </p>
     </div>
