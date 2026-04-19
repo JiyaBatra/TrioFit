@@ -1,5 +1,5 @@
-const axios = require('axios');
-const FormData = require('form-data');
+import axios from 'axios';
+import FormData from 'form-data';
 
 // Placeholder for AI try-on processing
 // In production, replace with actual AI service integration
@@ -81,4 +81,4 @@ const tryOnController = {
   }
 };
 
-module.exports = tryOnController;
+export default tryOnController;
