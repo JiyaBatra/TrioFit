@@ -1,11 +1,10 @@
 import { useState, useRef } from "react";
-import axios from "axios";
 
 const TryOnModal = ({ product, onClose }) => {
   const [userImage, setUserImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [resultImage, setResultImage] = useState(null);
+  const [placeholderMessage, setPlaceholderMessage] = useState("");
   const fileInputRef = useRef(null);
 
   const handleImageUpload = (e) => {
@@ -18,33 +17,20 @@ const TryOnModal = ({ product, onClose }) => {
     }
   };
 
-  const handleTryOn = async () => {
+  const handleTryOn = () => {
     if (!userImage) return;
 
     setIsProcessing(true);
-    try {
-      const formData = new FormData();
-      formData.append("userImage", userImage);
-      formData.append("productImage", product.image);
-      formData.append("productName", product.name);
-
-      const response = await axios.post("http://localhost:5000/api/tryon", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      setResultImage(response.data.resultImage);
-    } catch (error) {
-      console.error("Error processing try-on:", error);
-      alert("Failed to process try-on. Please try again.");
-    } finally {
+    setTimeout(() => {
+      setPlaceholderMessage("Feature Disabled");
       setIsProcessing(false);
-    }
+    }, 300);
   };
 
   const resetModal = () => {
     setUserImage(null);
     setPreviewImage(null);
-    setResultImage(null);
+    setPlaceholderMessage("");
     setIsProcessing(false);
   };
 
@@ -56,7 +42,7 @@ const TryOnModal = ({ product, onClose }) => {
         <h2>Try It On AI</h2>
         <p>Upload your photo to see how {product.name} looks on you!</p>
 
-        {!resultImage ? (
+        {!placeholderMessage ? (
           <>
             <div className="upload-section">
               <input
@@ -96,8 +82,8 @@ const TryOnModal = ({ product, onClose }) => {
           </>
         ) : (
           <div className="result-section">
-            <h3>Result:</h3>
-            <img src={resultImage} alt="Try-on result" className="result-img" />
+            <h3>Coming Soon</h3>
+            <p>{placeholderMessage}</p>
             <div className="result-actions">
               <button onClick={resetModal}>Try Another Photo</button>
               <button onClick={onClose}>Close</button>
