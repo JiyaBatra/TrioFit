@@ -1,10 +1,12 @@
 import { useState, useRef } from "react";
+import axios from "axios";
 
 const TryOnModal = ({ product, onClose }) => {
   const [userImage, setUserImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [placeholderMessage, setPlaceholderMessage] = useState("");
+  const [resultImage, setResultImage] = useState(null);
+  const [error, setError] = useState("");
   const fileInputRef = useRef(null);
 
   const handleImageUpload = (e) => {
@@ -17,20 +19,40 @@ const TryOnModal = ({ product, onClose }) => {
     }
   };
 
-  const handleTryOn = () => {
+  const handleTryOn = async () => {
     if (!userImage) return;
 
     setIsProcessing(true);
-    setTimeout(() => {
-      setPlaceholderMessage("Feature Disabled");
+    setError("");
+
+    try {
+      const formData = new FormData();
+      formData.append("userImage", userImage);
+      formData.append("productImage", product.image);
+      formData.append("productName", product.name);
+
+      const response = await axios.post("http://localhost:5000/api/tryon", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      setResultImage(response.data.resultImage);
+    } catch (err) {
+      console.error("Try-on request failed:", err);
+      setError(
+        err?.response?.data?.message ||
+          err?.message ||
+          "Unable to generate try-on result."
+      );
+    } finally {
       setIsProcessing(false);
-    }, 300);
+    }
   };
 
   const resetModal = () => {
     setUserImage(null);
     setPreviewImage(null);
-    setPlaceholderMessage("");
+    setResultImage(null);
+    setError("");
     setIsProcessing(false);
   };
 
@@ -42,7 +64,7 @@ const TryOnModal = ({ product, onClose }) => {
         <h2>Try It On AI</h2>
         <p>Upload your photo to see how {product.name} looks on you!</p>
 
-        {!placeholderMessage ? (
+        {!resultImage ? (
           <>
             <div className="upload-section">
               <input
@@ -72,6 +94,8 @@ const TryOnModal = ({ product, onClose }) => {
               <img src={product.image} alt={product.name} className="product-img" />
             </div>
 
+            {error && <p className="error-message">{error}</p>}
+
             <button
               className="try-on-submit-btn"
               onClick={handleTryOn}
@@ -82,8 +106,8 @@ const TryOnModal = ({ product, onClose }) => {
           </>
         ) : (
           <div className="result-section">
-            <h3>Coming Soon</h3>
-            <p>{placeholderMessage}</p>
+            <h3>Try-On Result</h3>
+            <img src={resultImage} alt="Try-on result" className="result-img" />
             <div className="result-actions">
               <button onClick={resetModal}>Try Another Photo</button>
               <button onClick={onClose}>Close</button>

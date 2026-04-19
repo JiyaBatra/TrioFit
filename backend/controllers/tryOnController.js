@@ -1,47 +1,41 @@
 import axios from 'axios';
 import FormData from 'form-data';
 
-// Placeholder for AI try-on processing
-// In production, replace with actual AI service integration
-const processTryOn = async (userImageBuffer, productImageUrl, productName) => {
-  try {
-    // For demonstration, we'll use a placeholder approach
-    // In real implementation, you would:
-
-    // Option 1: Use Replicate API for virtual try-on
-    // const replicateResponse = await axios.post('https://api.replicate.com/v1/predictions', {
-    //   version: "virtual-try-on-model-version",
-    //   input: {
-    //     person_image: userImageBuffer,
-    //     garment_image: productImageUrl,
-    //     category: "upper_body" // or detect from product
-    //   }
-    // }, {
-    //   headers: { 'Authorization': `Token ${process.env.REPLICATE_API_TOKEN}` }
-    // });
-
-    // Option 2: Use HuggingFace API
-    // const hfResponse = await axios.post('https://api-inference.huggingface.co/models/your-model', {
-    //   inputs: {
-    //     person: userImageBuffer,
-    //     garment: productImageUrl
-    //   }
-    // }, {
-    //   headers: { 'Authorization': `Bearer ${process.env.HF_API_TOKEN}` }
-    // });
-
-    // For now, return a placeholder response
-    // In production, return the processed image URL or base64
-    return {
-      success: true,
-      resultImage: "https://via.placeholder.com/400x600?text=AI+Try-On+Result",
-      message: "Try-on processed successfully (placeholder)"
-    };
-
-  } catch (error) {
-    console.error('Error processing try-on:', error);
-    throw new Error('Failed to process try-on');
+const processTryOn = async (userImageBuffer, userImageMimeType, productName) => {
+  const openAiKey = process.env.OPENAI_API_KEY;
+  if (!openAiKey) {
+    throw new Error('Missing OPENAI_API_KEY in backend environment');
   }
+
+  const prompt = `A realistic photograph of the person in this image wearing the selected clothing item: ${productName}. The output should show the garment naturally applied to the user's body in a polished, photo-real style.`;
+
+  const formData = new FormData();
+  formData.append('model', 'gpt-image-1');
+  formData.append('image[]', userImageBuffer, {
+    filename: 'user-photo.png',
+    contentType: userImageMimeType || 'image/png',
+  });
+  formData.append('prompt', prompt);
+  formData.append('size', '1024x1024');
+  formData.append('n', '1');
+
+  const response = await axios.post('https://api.openai.com/v1/images/edits', formData, {
+    headers: {
+      Authorization: `Bearer ${openAiKey}`,
+      ...formData.getHeaders(),
+    },
+  });
+
+  const imageData = response?.data?.data?.[0]?.b64_json;
+  if (!imageData) {
+    throw new Error('AI service did not return an image');
+  }
+
+  return {
+    success: true,
+    resultImage: `data:image/png;base64,${imageData}`,
+    message: 'Try-on result generated successfully',
+  };
 };
 
 const tryOnController = {
@@ -61,14 +55,14 @@ const tryOnController = {
       // Process the try-on
       const result = await processTryOn(
         userImage.buffer,
-        productImage,
+        userImage.mimetype,
         productName
       );
 
       res.json({
         success: true,
         resultImage: result.resultImage,
-        message: result.message
+        message: result.message,
       });
 
     } catch (error) {
