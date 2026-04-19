@@ -1,0 +1,22 @@
+TrioFit/
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── ProductCard.jsx (modified for hover effect)
+│   │   │   ├── TryOnModal.jsx (new component)
+│   │   │   └── ...
+│   │   ├── pages/
+│   │   │   ├── TryOn3D.jsx (existing, can be updated)
+│   │   │   └── ...
+│   │   └── ...
+├── backend/
+│   ├── controllers/
+│   │   ├── tryOnController.js (new)
+│   │   └── ...
+│   ├── routes/
+│   │   ├── tryOnRoutes.js (new)
+│   │   └── ...
+│   ├── middleware/
+│   │   └── upload.js (for multer)
+│   ├── server.js (update to include routes)
+│   └── ...
