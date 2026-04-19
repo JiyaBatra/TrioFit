@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 
+
 dotenv.config();
 
 const app = express();
@@ -39,6 +40,7 @@ mongoose.connect(process.env.MONGO_URI)
 app.use("/api/auth", authRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/products", productRoutes);
+
 
 // Server start
 const PORT = process.env.PORT || 5000;
