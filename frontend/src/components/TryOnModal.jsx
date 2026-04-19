@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
-import axios from "axios";
+import * as tf from "@tensorflow/tfjs";
+import * as bodySegmentation from "@tensorflow-models/body-segmentation";
 
 const TryOnModal = ({ product, onClose }) => {
   const [userImage, setUserImage] = useState(null);
@@ -26,23 +27,65 @@ const TryOnModal = ({ product, onClose }) => {
     setError("");
 
     try {
-      const formData = new FormData();
-      formData.append("userImage", userImage);
-      formData.append("productImage", product.image);
-      formData.append("productName", product.name);
+      // Load TensorFlow.js
+      await tf.ready();
 
-      const response = await axios.post("http://localhost:5000/api/tryon", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+      // Load the body segmentation model
+      const segmenter = await bodySegmentation.createSegmenter(bodySegmentation.SupportedModels.MediaPipeSelfieSegmentation, {
+        runtime: 'tfjs'
       });
 
-      setResultImage(response.data.resultImage);
+      // Create canvas
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const userImg = new Image();
+      userImg.src = previewImage;
+      await new Promise(resolve => userImg.onload = resolve);
+      canvas.width = userImg.width;
+      canvas.height = userImg.height;
+      ctx.drawImage(userImg, 0, 0);
+
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      // Segment the image
+      const segmentation = await segmenter.segmentPeople(imageData);
+
+      // For simplicity, assume one person
+      if (segmentation.length > 0) {
+        const mask = segmentation[0].mask;
+
+        // Find the bounding box of the person
+        let minX = canvas.width, minY = canvas.height, maxX = 0, maxY = 0;
+        for (let y = 0; y < canvas.height; y++) {
+          for (let x = 0; x < canvas.width; x++) {
+            if (mask.get(y, x) > 0.5) {
+              if (x < minX) minX = x;
+              if (x > maxX) maxX = x;
+              if (y < minY) minY = y;
+              if (y > maxY) maxY = y;
+            }
+          }
+        }
+
+        // Draw the product image centered on the bounding box
+        const productImg = new Image();
+        productImg.src = product.image;
+        await new Promise(resolve => productImg.onload = resolve);
+        const centerX = (minX + maxX) / 2;
+        const centerY = (minY + maxY) / 2;
+        const scale = 0.8; // adjust scale
+        const width = (maxX - minX) * scale;
+        const height = productImg.height * (width / productImg.width);
+        ctx.drawImage(productImg, centerX - width / 2, centerY - height / 2, width, height);
+
+        // Set the result
+        setResultImage(canvas.toDataURL());
+      } else {
+        setError("No person detected in the image.");
+      }
     } catch (err) {
-      console.error("Try-on request failed:", err);
-      setError(
-        err?.response?.data?.message ||
-          err?.message ||
-          "Unable to generate try-on result."
-      );
+      console.error("Try-on processing failed:", err);
+      setError("Unable to generate try-on result.");
     } finally {
       setIsProcessing(false);
     }
