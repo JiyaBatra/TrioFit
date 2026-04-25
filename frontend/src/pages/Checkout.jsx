@@ -119,23 +119,91 @@ const Checkout = () => {
         price: item.price,
         total: item.price * item.quantity,
       })),
-      orderStatus: paymentMethod === "Cash on Delivery" ? "Pending" : "Paid",
     };
 
-    try {
-      setLoading(true);
-      const response = await axios.post("http://localhost:5000/api/orders/create", orderPayload);
-      if (response.data?.success) {
-        dispatch(clearCart());
-        navigate("/order-success", { state: { orderId: response.data.order._id } });
-      } else {
-        setError("Unable to place order. Please try again.");
+    if (paymentMethod === "Cash on Delivery") {
+      try {
+        setLoading(true);
+        const response = await axios.post("http://localhost:5000/api/orders/create", { ...orderPayload, orderStatus: "Pending" });
+        if (response.data?.success) {
+          dispatch(clearCart());
+          navigate("/order-success", { state: { orderId: response.data.order._id } });
+        } else {
+          setError("Unable to place order. Please try again.");
+        }
+      } catch (err) {
+        setError(err.response?.data?.message || "Unable to place order. Please try again.");
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      setError(err.response?.data?.message || "Unable to place order. Please try again.");
-      console.error(err);
-    } finally {
-      setLoading(false);
+    } else {
+      // Online payment
+      try {
+        setLoading(true);
+        const orderResponse = await axios.post("http://localhost:5000/api/payment/create-order", { amount: totalPrice });
+        if (orderResponse.data?.success) {
+          const { order } = orderResponse.data;
+
+          // Load Razorpay script
+          const script = document.createElement("script");
+          script.src = "https://checkout.razorpay.com/v1/checkout.js";
+          document.body.appendChild(script);
+
+          script.onload = () => {
+            const options = {
+              key: process.env.REACT_APP_RAZORPAY_KEY_ID || "rzp_test_SeThf4eHcz4HZO", // Use env var
+              amount: order.amount,
+              currency: order.currency,
+              name: "TrioFit",
+              description: "Purchase",
+              order_id: order.id,
+              handler: async (response) => {
+                try {
+                  const verifyResponse = await axios.post("http://localhost:5000/api/payment/verify", {
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_signature: response.razorpay_signature,
+                    orderData: orderPayload,
+                  });
+                  if (verifyResponse.data?.success) {
+                    dispatch(clearCart());
+                    navigate("/order-success", { state: { orderId: verifyResponse.data.order._id } });
+                  } else {
+                    setError("Payment verification failed.");
+                  }
+                } catch (err) {
+                  setError("Payment verification failed.");
+                  console.error(err);
+                } finally {
+                  setLoading(false);
+                }
+              },
+              prefill: {
+                name: form.fullName,
+                email: form.email,
+                contact: form.phone,
+              },
+              theme: {
+                color: "#3399cc",
+              },
+            };
+            const rzp = new window.Razorpay(options);
+            rzp.on("payment.failed", (response) => {
+              setError("Payment failed. Please try again.");
+              setLoading(false);
+            });
+            rzp.open();
+          };
+        } else {
+          setError("Unable to create payment order.");
+          setLoading(false);
+        }
+      } catch (err) {
+        setError("Unable to initiate payment.");
+        console.error(err);
+        setLoading(false);
+      }
     }
   };
 

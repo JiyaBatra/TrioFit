@@ -1,5 +1,6 @@
 import razorpay from "../config/razorpay.js";
 import crypto from "crypto";
+import Order from "../models/Order.js";
 
 // CREATE ORDER
 export const createRazorpayOrder = async (req, res) => {
@@ -25,23 +26,35 @@ export const createRazorpayOrder = async (req, res) => {
 };
 
 // VERIFY PAYMENT
-export const verifyPayment = (req, res) => {
+export const verifyPayment = async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      orderData,
+    } = req.body;
 
     const body = razorpay_order_id + "|" + razorpay_payment_id;
 
     const expectedSignature = crypto
-      .createHmac("sha256", "ytt4L3k74UQ23poWi0Ayv8eu")
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(body)
       .digest("hex");
 
     if (expectedSignature === razorpay_signature) {
-      return res.json({ success: true });
+      // Create order in DB
+      const order = new Order({
+        ...orderData,
+        orderStatus: "Paid",
+      });
+      const savedOrder = await order.save();
+      return res.json({ success: true, order: savedOrder });
     } else {
-      return res.status(400).json({ success: false });
+      return res.status(400).json({ success: false, message: "Payment verification failed" });
     }
   } catch (err) {
-    res.status(500).json({ success: false });
+    console.error(err);
+    res.status(500).json({ success: false, message: "Verification error" });
   }
 };
