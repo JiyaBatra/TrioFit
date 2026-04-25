@@ -1,7 +1,7 @@
 // src/pages/Login.jsx
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import bgVideo from "../assets/images/Video bg/background.mp4";
 
 const Login = () => {
@@ -10,8 +10,6 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
-
   const handleLogin = async () => {
     try {
       setLoading(true);
@@ -86,9 +84,18 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
 
+          <div className="auth-links auth-links-right">
+            <Link to="/forgot-password">Forgot password?</Link>
+          </div>
+
           <button onClick={handleLogin} disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </button>
+
+          <div className="auth-links">
+            <span>Don&apos;t have an account?</span>
+            <Link to="/register">Create one</Link>
+          </div>
         </div>
       </div>
     </div>
