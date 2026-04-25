@@ -278,7 +278,9 @@ const Checkout = () => {
   return (
     <div className="checkout-page">
       <h2>Checkout</h2>
+      
       <div className="checkout-grid">
+      <div className="left-column">
         <section className="product-details-section">
           <h3>1. Product Details</h3>
           {itemDetails.map((item, idx) => (
@@ -325,6 +327,34 @@ const Checkout = () => {
           ))}
         </section>
 
+        
+        <section className="final-summary">
+          <h3>5. Order Summary</h3>
+          <div className="summary-row">
+            <span>Product(s) total</span>
+            <span>{formatPrice(subtotal)}</span>
+          </div>
+          <div className="summary-row">
+            <span>Delivery charge</span>
+            <span>{formatPrice(deliveryCharge)}</span>
+          </div>
+          <div className="summary-row">
+            <span>Discount</span>
+            <span>-{formatPrice(discount)}</span>
+          </div>
+          <div className="summary-total">
+            <strong>Final amount</strong>
+            <strong>{formatPrice(totalPrice)}</strong>
+          </div>
+
+          {error && <div className="error-message">{error}</div>}
+
+          <button type="button" className="place-order-btn" onClick={handlePlaceOrder} disabled={loading}>
+            {loading ? "Placing Order..." : "Place Order"}
+          </button>
+        </section>
+
+        </div>
         <section className="address-section">
           <h3>2. Delivery Address</h3>
           <form className="checkout-form" onSubmit={handlePlaceOrder}>
@@ -367,6 +397,7 @@ const Checkout = () => {
           </form>
 
           <h3>3. Delivery Options</h3>
+          <div className="delivery-options">
           <label>
             <input
               type="radio"
@@ -387,6 +418,7 @@ const Checkout = () => {
             />
             Express Delivery (1-2 days)
           </label>
+</div>
 
           <h3>4. Payment Method</h3>
           <div className="payment-block">
@@ -422,32 +454,6 @@ const Checkout = () => {
               Cash on Delivery
             </label>
           </div>
-        </section>
-
-        <section className="final-summary">
-          <h3>5. Order Summary</h3>
-          <div className="summary-row">
-            <span>Product(s) total</span>
-            <span>{formatPrice(subtotal)}</span>
-          </div>
-          <div className="summary-row">
-            <span>Delivery charge</span>
-            <span>{formatPrice(deliveryCharge)}</span>
-          </div>
-          <div className="summary-row">
-            <span>Discount</span>
-            <span>-{formatPrice(discount)}</span>
-          </div>
-          <div className="summary-total">
-            <strong>Final amount</strong>
-            <strong>{formatPrice(totalPrice)}</strong>
-          </div>
-
-          {error && <div className="error-message">{error}</div>}
-
-          <button type="button" className="place-order-btn" onClick={handlePlaceOrder} disabled={loading}>
-            {loading ? "Placing Order..." : "Place Order"}
-          </button>
         </section>
       </div>
     </div>
