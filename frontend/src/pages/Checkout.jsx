@@ -4,6 +4,30 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import axios from "axios";
 import { clearCart } from "../redux/cartSlice";
 
+const API_BASE_URL = "http://localhost:5000";
+
+const loadRazorpayScript = () =>
+  new Promise((resolve) => {
+    if (window.Razorpay) {
+      resolve(true);
+      return;
+    }
+
+    const existingScript = document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]');
+    if (existingScript) {
+      existingScript.addEventListener("load", () => resolve(true), { once: true });
+      existingScript.addEventListener("error", () => resolve(false), { once: true });
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+
 const Checkout = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -97,6 +121,12 @@ const Checkout = () => {
       return;
     }
 
+    const normalizedItems = itemDetails.map((item) => ({
+      ...item,
+      quantity: Math.max(1, Number(item.quantity) || 1),
+      price: Number(item.price) || 0,
+    }));
+
     const orderPayload = {
       customerName: form.fullName,
       phone: form.phone,
@@ -111,7 +141,7 @@ const Checkout = () => {
       discount,
       deliveryCharge,
       totalPrice,
-      products: itemDetails.map((item) => ({
+      products: normalizedItems.map((item) => ({
         productId: item.productId,
         productName: item.productName,
         size: item.size,
@@ -124,7 +154,7 @@ const Checkout = () => {
     if (paymentMethod === "Cash on Delivery") {
       try {
         setLoading(true);
-        const response = await axios.post("http://localhost:5000/api/orders/create", { ...orderPayload, orderStatus: "Pending" });
+        const response = await axios.post(`${API_BASE_URL}/api/orders/create`, { ...orderPayload, orderStatus: "Pending" });
         if (response.data?.success) {
           dispatch(clearCart());
           navigate("/order-success", { state: { orderId: response.data.order._id } });
@@ -141,66 +171,78 @@ const Checkout = () => {
       // Online payment
       try {
         setLoading(true);
-        const orderResponse = await axios.post("http://localhost:5000/api/payment/create-order", { amount: totalPrice });
-        if (orderResponse.data?.success) {
-          const { order } = orderResponse.data;
-
-          // Load Razorpay script
-          const script = document.createElement("script");
-          script.src = "https://checkout.razorpay.com/v1/checkout.js";
-          document.body.appendChild(script);
-
-          script.onload = () => {
-            const options = {
-              key: process.env.REACT_APP_RAZORPAY_KEY_ID || "rzp_test_SeThf4eHcz4HZO", // Use env var
-              amount: order.amount,
-              currency: order.currency,
-              name: "TrioFit",
-              description: "Purchase",
-              order_id: order.id,
-              handler: async (response) => {
-                try {
-                  const verifyResponse = await axios.post("http://localhost:5000/api/payment/verify", {
-                    razorpay_order_id: response.razorpay_order_id,
-                    razorpay_payment_id: response.razorpay_payment_id,
-                    razorpay_signature: response.razorpay_signature,
-                    orderData: orderPayload,
-                  });
-                  if (verifyResponse.data?.success) {
-                    dispatch(clearCart());
-                    navigate("/order-success", { state: { orderId: verifyResponse.data.order._id } });
-                  } else {
-                    setError("Payment verification failed.");
-                  }
-                } catch (err) {
-                  setError("Payment verification failed.");
-                  console.error(err);
-                } finally {
-                  setLoading(false);
-                }
-              },
-              prefill: {
-                name: form.fullName,
-                email: form.email,
-                contact: form.phone,
-              },
-              theme: {
-                color: "#3399cc",
-              },
-            };
-            const rzp = new window.Razorpay(options);
-            rzp.on("payment.failed", (response) => {
-              setError("Payment failed. Please try again.");
-              setLoading(false);
-            });
-            rzp.open();
-          };
-        } else {
-          setError("Unable to create payment order.");
+        const sdkLoaded = await loadRazorpayScript();
+        if (!sdkLoaded) {
+          setError("Unable to load Razorpay checkout. Please check your internet connection.");
           setLoading(false);
+          return;
         }
+
+        const orderResponse = await axios.post(`${API_BASE_URL}/api/payment/create-order`, { amount: totalPrice });
+        if (!orderResponse.data?.success || !orderResponse.data?.order || !orderResponse.data?.key) {
+          setError(orderResponse.data?.message || "Unable to create payment order.");
+          setLoading(false);
+          return;
+        }
+
+        const { order, key } = orderResponse.data;
+        const options = {
+          key,
+          amount: order.amount,
+          currency: order.currency,
+          name: "TrioFit",
+          description: "Purchase",
+          order_id: order.id,
+          handler: async (response) => {
+            try {
+              const verifyResponse = await axios.post(`${API_BASE_URL}/api/payment/verify`, {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                orderData: orderPayload,
+              });
+
+              if (verifyResponse.data?.success) {
+                dispatch(clearCart());
+                navigate("/order-success", { state: { orderId: verifyResponse.data.order._id } });
+                return;
+              }
+
+              setError(verifyResponse.data?.message || "Payment verification failed.");
+            } catch (err) {
+              setError(err.response?.data?.message || "Payment verification failed.");
+              console.error(err);
+            } finally {
+              setLoading(false);
+            }
+          },
+          prefill: {
+            name: form.fullName,
+            email: form.email,
+            contact: form.phone,
+          },
+          notes: {
+            deliveryType,
+            paymentMethod,
+          },
+          theme: {
+            color: "#3399cc",
+          },
+          modal: {
+            ondismiss: () => {
+              setLoading(false);
+            },
+          },
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.on("payment.failed", () => {
+          setError("Payment failed. Please try again.");
+          setLoading(false);
+        });
+        rzp.open();
       } catch (err) {
-        setError("Unable to initiate payment.");
+        setError(err.response?.data?.message || "Unable to initiate payment.");
         console.error(err);
         setLoading(false);
       }

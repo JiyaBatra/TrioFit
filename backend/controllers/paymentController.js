@@ -2,13 +2,29 @@ import razorpay from "../config/razorpay.js";
 import crypto from "crypto";
 import Order from "../models/Order.js";
 
+const env = globalThis.process?.env ?? {};
+
 // CREATE ORDER
 export const createRazorpayOrder = async (req, res) => {
   try {
-    const { amount } = req.body;
+    const parsedAmount = Number(req.body?.amount);
+
+    if (!env.RAZORPAY_KEY_ID || !env.RAZORPAY_KEY_SECRET) {
+      return res.status(500).json({
+        success: false,
+        message: "Razorpay keys are missing in backend environment variables.",
+      });
+    }
+
+    if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "A valid payment amount is required.",
+      });
+    }
 
     const options = {
-      amount: amount * 100, // convert to paise
+      amount: Math.round(parsedAmount * 100),
       currency: "INR",
       receipt: "receipt_" + Date.now(),
     };
@@ -17,11 +33,15 @@ export const createRazorpayOrder = async (req, res) => {
 
     res.json({
       success: true,
+      key: env.RAZORPAY_KEY_ID,
       order,
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Razorpay order failed" });
+    console.error("Razorpay order creation failed:", err);
+    res.status(500).json({
+      success: false,
+      message: err?.error?.description || err?.message || "Razorpay order failed",
+    });
   }
 };
 
@@ -38,7 +58,7 @@ export const verifyPayment = async (req, res) => {
     const body = razorpay_order_id + "|" + razorpay_payment_id;
 
     const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .createHmac("sha256", env.RAZORPAY_KEY_SECRET)
       .update(body)
       .digest("hex");
 
@@ -50,11 +70,11 @@ export const verifyPayment = async (req, res) => {
       });
       const savedOrder = await order.save();
       return res.json({ success: true, order: savedOrder });
-    } else {
-      return res.status(400).json({ success: false, message: "Payment verification failed" });
     }
+
+    return res.status(400).json({ success: false, message: "Payment verification failed" });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Verification error" });
+    console.error("Razorpay verification failed:", err);
+    res.status(500).json({ success: false, message: err?.message || "Verification error" });
   }
 };
