@@ -1,22 +1,117 @@
 TrioFit/
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── ProductCard.jsx (modified for hover effect)
-│   │   │   ├── TryOnModal.jsx (new component)
-│   │   │   └── ...
-│   │   ├── pages/
-│   │   │   ├── TryOn3D.jsx (existing, can be updated)
-│   │   │   └── ...
-│   │   └── ...
+├── folder_structure.txt
 ├── backend/
+│   ├── config.db.js
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package.json
+│   ├── README.md
+│   ├── server.js
+│   ├── vite.config.js
+│   ├── config/
+│   │   └── razorpay.js
 │   ├── controllers/
-│   │   ├── tryOnController.js (new)
-│   │   └── ...
-│   ├── routes/
-│   │   ├── tryOnRoutes.js (new)
-│   │   └── ...
+│   │   ├── authController.js
+│   │   ├── orderController.js
+│   │   ├── paymentController.js
+│   │   └── productController.js
 │   ├── middleware/
-│   │   └── upload.js (for multer)
-│   ├── server.js (update to include routes)
-│   └── ...
+│   │   ├── authMiddleware.js
+│   │   └── upload.js
+│   ├── models/
+│   │   ├── Order.js
+│   │   ├── Product.js
+│   │   └── User.js
+│   ├── public/
+│   ├── routes/
+│   │   ├── authRoutes.js
+│   │   ├── orderRoutes.js
+│   │   ├── paymentRoutes.js
+│   │   └── productRoutes.js
+│   └── src/
+│       ├── App.css
+│       ├── App.jsx
+│       ├── index.css
+│       ├── main.jsx
+│       └── assets/
+├── frontend/
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package.json
+│   ├── README.md
+│   ├── vite.config.js
+│   ├── public/
+│   │   └── models/
+│   └── src/
+│       ├── App.css
+│       ├── App.jsx
+│       ├── index.css
+│       ├── main.jsx
+│       ├── assets/
+│       │   └── images/
+│       │       ├── banner/
+│       │       ├── kid/
+│       │       │   └── kid/
+│       │       │       ├── boys'clothing/
+│       │       │       └── girls clothing/
+│       │       ├── logo/
+│       │       ├── man/
+│       │       │   └── man/
+│       │       │       ├── Bottomwear/
+│       │       │       ├── Ethnic wear/
+│       │       │       └── Topwear/
+│       │       ├── offer/
+│       │       ├── Video bg/
+│       │       └── women/
+│       │           └── women/
+│       │               └── ...
+│       ├── components/
+│       │   ├── AddProductForm.css
+│       │   ├── AddProductForm.jsx
+│       │   ├── Category.jsx
+│       │   ├── Footer.jsx
+│       │   ├── Header.jsx
+│       │   ├── Loader.jsx
+│       │   ├── MainContent.css
+│       │   ├── MainContent.jsx
+│       │   ├── Offer.jsx
+│       │   ├── Popular.jsx
+│       │   ├── ProductCard.jsx
+│       │   ├── ScrollToTop.jsx
+│       │   └── TokenDebug.jsx
+│       ├── data/
+│       │   └── products.js
+│       ├── pages/
+│       │   ├── AboutUs.jsx
+│       │   ├── CarrerOppornuties.jsx
+│       │   ├── Cart.jsx
+│       │   ├── Checkout.jsx
+│       │   ├── fiftypercentoff.jsx
+│       │   ├── ForgotPassword.jsx
+│       │   ├── Frequentlyaskedques.jsx
+│       │   ├── Home.jsx
+│       │   ├── Kids.jsx
+│       │   ├── Login.jsx
+│       │   ├── Men.jsx
+│       │   ├── OrderSuccess.jsx
+│       │   ├── OurStore.jsx
+│       │   ├── PrivacyAndPolicy.jsx
+│       │   ├── Product.jsx
+│       │   ├── Profile.jsx
+│       │   ├── Register.jsx
+│       │   ├── ResetPassword.jsx
+│       │   ├── ReturnAndExchange.jsx
+│       │   ├── ReturnPolicy.jsx
+│       │   ├── SeeMore.jsx
+│       │   ├── SeeMorePage.jsx
+│       │   ├── SellerDashboard.css
+│       │   ├── SellerDashboard.jsx
+│       │   ├── sixtypercentoff.jsx
+│       │   ├── SupportTeam.jsx
+│       │   ├── TermsAndCondition.jsx
+│       │   ├── thirtypercentoff.jsx
+│       │   ├── twentypercentoff.jsx
+│       │   └── Women.jsx
+│       └── redux/
+│           ├── cartSlice.js
+│           └── Store.js
