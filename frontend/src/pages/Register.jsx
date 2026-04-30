@@ -36,23 +36,25 @@ const Register = () => {
       return;
     }
 
-    try {
-      setLoading(true);
-      const { data } = await axios.post(
-        "http://localhost:5000/api/auth/register",
-        {
-          fullName,
-          email,
-          password,
-          role,
-          accountHolderName,
-          accountNumber,
-          ifscCode,
-          shopName: role === "seller" ? shopName : undefined,
-          gstNumber: role === "seller" ? gstNumber : undefined,
-        },
-        { withCredentials: true }
-      );
+   const API = import.meta.env.VITE_API_URL;
+
+try {
+  setLoading(true);
+  const { data } = await axios.post(
+    `${API}/api/auth/register`,
+    {
+      fullName,
+      email,
+      password,
+      role,
+      accountHolderName,
+      accountNumber,
+      ifscCode,
+      shopName: role === "seller" ? shopName : undefined,
+      gstNumber: role === "seller" ? gstNumber : undefined,
+    },
+    { withCredentials: true }
+  );
 
       console.log("Registered successfully:", data);
       alert("Account created successfully! Redirecting to login...");

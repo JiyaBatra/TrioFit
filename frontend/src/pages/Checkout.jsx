@@ -4,7 +4,8 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import axios from "axios";
 import { clearCart } from "../redux/cartSlice";
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000";
 const formatPrice = (value) => `Rs.${Number(value || 0)}`;
 
 const loadRazorpayScript = () =>

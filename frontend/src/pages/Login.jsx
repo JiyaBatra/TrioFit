@@ -19,11 +19,13 @@ const Login = () => {
       console.log("Email:", email);
       console.log("Role from dropdown:", role);
 
-      const { data } = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        { email, password, role },
-        { withCredentials: true }
-      );
+      const API = import.meta.env.VITE_API_URL;
+
+const { data } = await axios.post(
+  `${API}/api/auth/login`,
+  { email, password, role },
+  { withCredentials: true }
+);
 
       console.log("✅ Login response:", data);
       console.log("User from server:", data.user);

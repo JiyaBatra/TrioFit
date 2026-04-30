@@ -34,10 +34,13 @@ const ResetPassword = () => {
       setError("");
       setMessage("");
 
-      const { data } = await axios.post(
-        "http://localhost:5000/api/auth/reset-password",
-        { token, password }
-      );
+    const API =
+  import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+const { data } = await axios.post(
+  `${API}/api/auth/reset-password`,
+  { token, password }
+);
 
       setMessage(data.message);
       setTimeout(() => navigate("/login"), 1500);
