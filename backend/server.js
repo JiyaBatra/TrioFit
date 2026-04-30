@@ -16,8 +16,15 @@ dotenv.config();
 const app = express();
 
 // Middleware
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://triofit.netlify.app",
+  "https://triofit.onrender.com"
+];
+
 app.use(cors({
-  origin: ["http://localhost:5173", "https://triofit.netlify.app"],
+  origin: allowedOrigins,
   credentials: true
 }));
 
