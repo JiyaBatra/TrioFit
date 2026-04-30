@@ -79,26 +79,7 @@ const Men = () => {
         </div>
       </div>
 
-    <section className="catalog-hero">
-      <div className="catalog-hero-card">
-        <h1 className="Title">Men</h1>
-        <p>Sharper browsing, stronger cards, and mobile spacing that holds together better.</p>
-      </div>
-      <div className="catalog-hero-panel">
-        <div className="catalog-stat">
-          <strong>Bottoms</strong>
-          <p>Cargos, joggers, trousers, and denim in a cleaner grid.</p>
-        </div>
-        <div className="catalog-stat">
-          <strong>Ethnic wear</strong>
-          <p>Festive options with quick jump into the gallery view.</p>
-        </div>
-        <div className="catalog-stat">
-          <strong>Topwear</strong>
-          <p>Casual staples and textured shirts with faster preview flow.</p>
-        </div>
-      </div>
-    </section>
+    
 
       <section className="catalog-section" id="bottomwear-section">
       <h3 className="mini-title">Bottoms</h3>
