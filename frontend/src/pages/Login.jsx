@@ -1,6 +1,6 @@
 // src/pages/Login.jsx
 import { useState } from "react";
-import axios from "axios";
+import apiClient from "../services/apiClient";
 import { Link } from "react-router-dom";
 import bgVideo from "../assets/images/Video bg/background.mp4";
 
@@ -21,10 +21,9 @@ const Login = () => {
 
       const API = import.meta.env.VITE_API_URL;
 
-const { data } = await axios.post(
-  `${API}/api/auth/login`,
-  { email, password, role },
-  { withCredentials: true }
+const { data } = await apiClient.post(
+  "/api/auth/login",
+  { email, password, role }
 );
 
       console.log("✅ Login response:", data);
