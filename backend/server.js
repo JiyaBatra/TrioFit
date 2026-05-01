@@ -20,7 +20,8 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
   "https://triofit.netlify.app",
-  "https://triofit.onrender.com"
+  "https://triofit.onrender.com",
+  "https://69f3992fbe8a0b0008add02a--triofit.netlify.app"
 ];
 
 app.use(cors({
