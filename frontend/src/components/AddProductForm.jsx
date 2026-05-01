@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "../services/apiClient";
 import "./AddProductForm.css";
 
 const AddProductForm = ({ onProductAdded, onCancel, editingProduct }) => {
@@ -115,8 +115,8 @@ const AddProductForm = ({ onProductAdded, onCancel, editingProduct }) => {
 
       let response;
       if (editingProduct) {
-        response = await axios.put(
-          `http://localhost:5000/api/products/${editingProduct._id}`,
+        response = await apiClient.put(
+          `/api/products/${editingProduct._id}`,
           {
             name: formData.name,
             price: parseFloat(formData.price),
@@ -129,14 +129,11 @@ const AddProductForm = ({ onProductAdded, onCancel, editingProduct }) => {
             colors: formData.colors,
             stock: parseInt(formData.stock),
             status: formData.status,
-          },
-          {
-            headers: { Authorization: `Bearer ${token}` },
           }
         );
       } else {
-        response = await axios.post(
-          "http://localhost:5000/api/products/add",
+        response = await apiClient.post(
+          "/api/products/add",
           {
             name: formData.name,
             price: parseFloat(formData.price),
@@ -148,9 +145,6 @@ const AddProductForm = ({ onProductAdded, onCancel, editingProduct }) => {
             sizes: formData.sizes,
             colors: formData.colors,
             stock: parseInt(formData.stock),
-          },
-          {
-            headers: { Authorization: `Bearer ${token}` },
           }
         );
       }

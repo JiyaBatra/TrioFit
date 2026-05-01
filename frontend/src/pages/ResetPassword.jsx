@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import axios from "axios";
+import apiClient from "../services/apiClient";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import bgVideo from "../assets/images/Video bg/background.mp4";
 
@@ -38,7 +38,7 @@ const ResetPassword = () => {
   import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const { data } = await axios.post(
-  `${API}/api/auth/reset-password`,
+  "/api/auth/reset-password",
   { token, password }
 );
 

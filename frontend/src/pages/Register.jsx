@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import apiClient from "../services/apiClient";
 import { useNavigate } from "react-router-dom";
 import bgVideo from "../assets/images/Video bg/background.mp4";
 
@@ -40,8 +40,8 @@ const Register = () => {
 
 try {
   setLoading(true);
-  const { data } = await axios.post(
-    `${API}/api/auth/register`,
+  const { data } = await apiClient.post(
+    "/api/auth/register",
     {
       fullName,
       email,
@@ -52,8 +52,7 @@ try {
       ifscCode,
       shopName: role === "seller" ? shopName : undefined,
       gstNumber: role === "seller" ? gstNumber : undefined,
-    },
-    { withCredentials: true }
+    }
   );
 
       console.log("Registered successfully:", data);
