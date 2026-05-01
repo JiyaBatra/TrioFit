@@ -1,11 +1,9 @@
 import { useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import axios from "axios";
+import apiClient from "../services/apiClient";
 import { clearCart } from "../redux/cartSlice";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:5000";
 const formatPrice = (value) => `Rs.${Number(value || 0)}`;
 
 const loadRazorpayScript = () =>
@@ -170,7 +168,7 @@ const Checkout = () => {
     if (paymentMethod === "Cash on Delivery") {
       try {
         setLoading(true);
-        const response = await axios.post(`${API_BASE_URL}/api/orders/create`, { ...orderPayload, orderStatus: "Pending" });
+        const response = await apiClient.post("/api/orders/create", { ...orderPayload, orderStatus: "Pending" });
         if (response.data?.success) {
           dispatch(clearCart());
           navigate("/order-success", { state: { orderId: response.data.order._id } });
@@ -194,7 +192,7 @@ const Checkout = () => {
           return;
         }
 
-        const orderResponse = await axios.post(`${API_BASE_URL}/api/payment/create-order`, { amount: totalPrice });
+        const orderResponse = await apiClient.post("/api/payment/create-order", { amount: totalPrice });
         if (!orderResponse.data?.success || !orderResponse.data?.order || !orderResponse.data?.key) {
           setError(orderResponse.data?.message || "Unable to create payment order.");
           setLoading(false);
@@ -211,7 +209,7 @@ const Checkout = () => {
           order_id: order.id,
           handler: async (response) => {
             try {
-              const verifyResponse = await axios.post(`${API_BASE_URL}/api/payment/verify`, {
+              const verifyResponse = await apiClient.post("/api/payment/verify", {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
