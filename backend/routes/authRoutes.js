@@ -189,6 +189,17 @@ router.post("/forgot-password", async (req, res) => {
       });
     }
 
+    // Check if email service is configured
+    const resendApiKey = process.env.RESEND_API_KEY;
+    const fromEmail = process.env.RESET_FROM_EMAIL || process.env.RESEND_FROM_EMAIL;
+
+    if (!resendApiKey || !fromEmail) {
+      console.warn("Password reset email is not configured - returning generic message");
+      return res.json({
+        message: "If an account exists with this email, a reset link has been sent.",
+      });
+    }
+
     const rawToken = crypto.randomBytes(32).toString("hex");
     const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
     const resetUrl = `${FRONTEND_URL}/reset-password?token=${rawToken}`;
