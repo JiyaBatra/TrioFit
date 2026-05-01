@@ -53,7 +53,10 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/payment", paymentRoutes);
 
-
+// Root health check
+app.get("/", (req, res) => {
+  res.send("TrioFit backend is running");
+});
 
 // Server start
 const PORT = process.env.PORT || 5000;
