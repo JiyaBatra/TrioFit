@@ -6,7 +6,17 @@ import crypto from "crypto";
 
 const router = express.Router();
 
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+const rawFrontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+const FRONTEND_URL = rawFrontendUrl.includes(",")
+  ? rawFrontendUrl
+      .split(",")
+      .map((url) => url.trim())
+      .find((url) =>
+        process.env.NODE_ENV === "production"
+          ? url.includes("netlify.app") || url.includes("render.com")
+          : url.includes("localhost")
+      ) || rawFrontendUrl.split(",")[0].trim()
+  : rawFrontendUrl.trim();
 const RESET_TOKEN_TTL_MS = 1000 * 60 * 30;
 
 const normalizeEmail = (email) => String(email || "").trim().toLowerCase();
@@ -15,7 +25,7 @@ const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 const sendResetPasswordEmail = async ({ email, fullName, resetUrl }) => {
   const resendApiKey = process.env.RESEND_API_KEY;
-  const fromEmail = process.env.RESET_FROM_EMAIL || process.env.RESEND_FROM_EMAIL;
+  const fromEmail = process.env.RESET_FROM_EMAIL || process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
 
   // Log reset URL for testing
   console.log("\n📧 === PASSWORD RESET EMAIL ===");
