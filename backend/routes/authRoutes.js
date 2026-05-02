@@ -9,6 +9,10 @@ const router = express.Router();
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 const RESET_TOKEN_TTL_MS = 1000 * 60 * 30;
 
+const normalizeEmail = (email) => String(email || "").trim().toLowerCase();
+
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 const sendResetPasswordEmail = async ({ email, fullName, resetUrl }) => {
   const resendApiKey = process.env.RESEND_API_KEY;
   const fromEmail = process.env.RESET_FROM_EMAIL || process.env.RESEND_FROM_EMAIL;
@@ -84,14 +88,16 @@ router.post("/register", async (req, res) => {
       gstNumber,
     } = req.body;
 
+    const normalizedEmail = normalizeEmail(email);
+
     console.log("\n📝 === REGISTRATION ATTEMPT ===");
     console.log("Full Name:", fullName);
-    console.log("Email:", email);
+    console.log("Email:", normalizedEmail);
     console.log("Role:", role);
     console.log("Shop Name (if seller):", shopName);
 
     // Check if user exists
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
       console.log("❌ User already exists");
       return res.status(400).json({ message: "User already exists" });
@@ -103,7 +109,7 @@ router.post("/register", async (req, res) => {
 
     const newUser = new User({
       fullName,
-      email,
+      email: normalizedEmail,
       password: hashedPassword,
       role,
       accountHolderName,
@@ -140,7 +146,8 @@ router.post("/login", async (req, res) => {
     console.log("Role requested:", role);
 
     // Check user - must match both email AND role
-    const user = await User.findOne({ email, role });
+    const normalizedEmail = normalizeEmail(email);
+    const user = await User.findOne({ email: normalizedEmail, role });
     if (!user) {
       console.log("❌ User not found with that email and role");
       return res.status(400).json({ message: "Invalid email or role" });
@@ -195,7 +202,10 @@ router.post("/forgot-password", async (req, res) => {
       return res.status(400).json({ message: "Email is required" });
     }
 
-    const user = await User.findOne({ email });
+    const normalizedEmail = normalizeEmail(email);
+    const user = await User.findOne({
+      email: { $regex: `^${escapeRegex(normalizedEmail)}$`, $options: "i" },
+    });
 
     if (!user) {
       return res.json({
