@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import axios from "axios";
+import apiClient from "../services/apiClient";
 import ProductCard from "../components/ProductCard";
 import { topProducts, bottomProducts, ethnicProducts } from "../data/products";
 import womenBannerTopwear from "../assets/images/banner/womentopwear.png";
@@ -30,7 +30,7 @@ const Women = () => {
 
   const fetchSellerProducts = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/api/products/all");
+      const { data } = await apiClient.get("/api/products/all");
       const womenProducts = data.products.filter((p) => p.category === "Women");
       
       setExtraProducts({

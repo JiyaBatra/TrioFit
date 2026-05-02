@@ -1,6 +1,6 @@
 import { topProducts, bottomProducts, ethnicProducts, kidEthnicProducts } from "../data/products";
 import { useRef, useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "../services/apiClient";
 import { useNavigate } from "react-router-dom";
 
 const Popular = () => {
@@ -20,7 +20,7 @@ const Popular = () => {
 
   const fetchSellerProducts = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/api/products/all");
+      const { data } = await apiClient.get("/api/products/all");
       setExtraProducts(data.products.slice(0, 4)); // Get first 4 seller products
     } catch (error) {
       console.error("Error fetching seller products:", error);

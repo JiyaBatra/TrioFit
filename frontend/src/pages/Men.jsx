@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "../services/apiClient";
 import ProductCard from "../components/ProductCard";
 import {
   menBottomProducts,
@@ -34,7 +34,7 @@ const Men = () => {
 
   const fetchSellerProducts = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/api/products/all");
+      const { data } = await apiClient.get("/api/products/all");
       const menProducts = data.products.filter((p) => p.category === "Men");
       
       setExtraProducts({
