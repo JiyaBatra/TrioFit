@@ -13,46 +13,60 @@ const sendResetPasswordEmail = async ({ email, fullName, resetUrl }) => {
   const resendApiKey = process.env.RESEND_API_KEY;
   const fromEmail = process.env.RESET_FROM_EMAIL || process.env.RESEND_FROM_EMAIL;
 
+  // Log reset URL for testing
+  console.log("\n📧 === PASSWORD RESET EMAIL ===");
+  console.log("To:", email);
+  console.log("Reset URL:", resetUrl);
+  console.log("Token valid for 30 minutes");
+
   if (!resendApiKey || !fromEmail) {
-    throw new Error("Password reset email is not configured");
+    console.warn("Email service not configured - URL logged above for testing");
+    return { delivered: false, logged: true };
   }
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${resendApiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: fromEmail,
-      to: [email],
-      subject: "Reset your Triofit password",
-      html: `
-        <div style="font-family: Arial, sans-serif; color: #111827; line-height: 1.6;">
-          <h2 style="margin-bottom: 12px;">Reset your password</h2>
-          <p>Hello ${fullName || "there"},</p>
-          <p>We received a request to reset your Triofit account password.</p>
-          <p>
-            <a
-              href="${resetUrl}"
-              style="display: inline-block; padding: 12px 20px; background: #111827; color: #ffffff; text-decoration: none; border-radius: 8px;"
-            >
-              Reset Password
-            </a>
-          </p>
-          <p>This link will expire in 30 minutes.</p>
-          <p>If you did not request this, you can safely ignore this email.</p>
-        </div>
-      `,
-    }),
-  });
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${resendApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: fromEmail,
+        to: [email],
+        subject: "Reset your Triofit password",
+        html: `
+          <div style="font-family: Arial, sans-serif; color: #111827; line-height: 1.6;">
+            <h2 style="margin-bottom: 12px;">Reset your password</h2>
+            <p>Hello ${fullName || "there"},</p>
+            <p>We received a request to reset your Triofit account password.</p>
+            <p>
+              <a
+                href="${resetUrl}"
+                style="display: inline-block; padding: 12px 20px; background: #111827; color: #ffffff; text-decoration: none; border-radius: 8px;"
+              >
+                Reset Password
+              </a>
+            </p>
+            <p>This link will expire in 30 minutes.</p>
+            <p>If you did not request this, you can safely ignore this email.</p>
+          </div>
+        `,
+      }),
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Failed to send reset email: ${errorText}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Resend API error:", errorText);
+      return { delivered: false, logged: true };
+    }
+
+    console.log("✅ Email sent successfully");
+    return { delivered: true };
+  } catch (err) {
+    console.error("Email service error:", err.message);
+    return { delivered: false, logged: true };
   }
-
-  return { delivered: true };
 };
 
 // REGISTER
@@ -216,11 +230,13 @@ router.post("/forgot-password", async (req, res) => {
       });
     } catch (emailError) {
       console.error("Email sending error:", emailError.message);
+      console.log("🔗 RESET URL FOR TESTING:", resetUrl);
       // Don't fail the request if email fails - user can try reset link later
     }
 
     res.json({
       message: "If an account exists with this email, a reset link has been sent.",
+      resetUrl: process.env.NODE_ENV === 'development' ? resetUrl : undefined,
     });
   } catch (error) {
     console.error("Forgot password error:", error);
