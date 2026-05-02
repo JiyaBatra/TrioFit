@@ -208,11 +208,16 @@ router.post("/forgot-password", async (req, res) => {
     user.resetPasswordExpires = new Date(Date.now() + RESET_TOKEN_TTL_MS);
     await user.save();
 
-    await sendResetPasswordEmail({
-      email: user.email,
-      fullName: user.fullName,
-      resetUrl,
-    });
+    try {
+      await sendResetPasswordEmail({
+        email: user.email,
+        fullName: user.fullName,
+        resetUrl,
+      });
+    } catch (emailError) {
+      console.error("Email sending error:", emailError.message);
+      // Don't fail the request if email fails - user can try reset link later
+    }
 
     res.json({
       message: "If an account exists with this email, a reset link has been sent.",
