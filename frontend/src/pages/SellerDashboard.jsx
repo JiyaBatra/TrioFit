@@ -35,12 +35,18 @@ const SellerDashboard = () => {
       setLoading(true);
       console.log("Fetching products with token:", token);
       
-      const { data } = await axios.get("http://localhost:5000/api/products/my-products", {
-        headers: { 
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-      });
+      const API =
+  import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+const { data } = await axios.get(
+  `${API}/api/products/my-products`,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  }
+);
       console.log("Products fetched successfully:", data);
       setProducts(data.products || []);
     } catch (error) {
